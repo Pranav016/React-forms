@@ -1,45 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { checkEmailIsValid } from './SimpleInput';
+import useInput from '../hooks/use-input';
 
 const BasicForm = (props) => {
-	const [firstName, setFirstName] = useState('');
-	const [firstNameTouched, setFirstNameTouched] = useState(false);
+	const {
+		value: firstName,
+		isValid: firstIsValid,
+		hasError: firstIsInvalid,
+		valueChangeHandler: firstInputOnChangeHandler,
+		inputBlurHandler: firstInputOnBlurHandler,
+		reset: firstNameReset,
+	} = useInput((value) => value.trim() !== '');
 
-	const [lastName, setLastName] = useState('');
-	const [lastNameTouched, setLastNameTouched] = useState(false);
+	const {
+		value: lastName,
+		isValid: lastIsValid,
+		hasError: lastIsInvalid,
+		valueChangeHandler: lastInputOnChangeHandler,
+		inputBlurHandler: lastInputOnBlurHandler,
+		reset: lastNameReset,
+	} = useInput((value) => value.trim() !== '');
 
-	const [email, setEmail] = useState('');
-	const [emailTouched, setEmailTouched] = useState(false);
-
-	let firstIsValid = firstName.trim() !== '';
-	let firstIsInvalid = !firstIsValid && firstNameTouched;
-
-	let lastIsValid = lastName.trim() !== '';
-	let lastIsInvalid = !lastIsValid && lastNameTouched;
-
-	let emailIsValid = checkEmailIsValid(email);
-	let emailIsInvalid = !emailIsValid && emailTouched;
-
-	const firstInputOnChangeHandler = (e) => {
-		setFirstName(e.target.value);
-	};
-	const firstInputOnBlurHandler = (e) => {
-		setFirstNameTouched(true);
-	};
-
-	const lastInputOnChangeHandler = (e) => {
-		setLastName(e.target.value);
-	};
-	const lastInputOnBlurHandler = (e) => {
-		setLastNameTouched(true);
-	};
-
-	const emailInputOnChangeHandler = (e) => {
-		setEmail(e.target.value);
-	};
-	const emailInputOnBlurHandler = (e) => {
-		setEmailTouched(true);
-	};
+	const {
+		value: email,
+		isValid: emailIsValid,
+		hasError: emailIsInvalid,
+		valueChangeHandler: emailInputOnChangeHandler,
+		inputBlurHandler: emailInputOnBlurHandler,
+		reset: emailReset,
+	} = useInput(checkEmailIsValid);
 
 	let formIsValid = false;
 	if (firstIsValid && lastIsValid && emailIsValid) formIsValid = true;
@@ -51,12 +40,9 @@ const BasicForm = (props) => {
 			return;
 		}
 
-		setFirstName('');
-		setLastName('');
-		setEmail('');
-		setFirstNameTouched(false);
-		setLastNameTouched(false);
-		setEmailTouched(false);
+		firstNameReset();
+		lastNameReset();
+		emailReset();
 	};
 
 	let firstClasses = firstIsInvalid ? 'form-control invalid' : 'form-control';
@@ -111,7 +97,7 @@ const BasicForm = (props) => {
 				)}
 			</div>
 			<div className='form-actions'>
-				<button>Submit</button>
+				<button disabled={!formIsValid}>Submit</button>
 			</div>
 		</form>
 	);
